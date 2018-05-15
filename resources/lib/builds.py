@@ -186,7 +186,7 @@ class BuildLinkExtractor(BaseExtractor):
         html = self._text()
 
         self.build_re = re.compile(
-            self.BUILD_RE.format(dist=libreelec.OS_RELEASE['NAME'], arch=config.arch),
+            self.BUILD_RE.format(dist=libreelec.name(), arch=config.arch),
             re.I)
 
         soup = BeautifulSoup(html, 'html.parser',
@@ -206,10 +206,14 @@ class ReleaseLinkExtractor(BaseExtractor):
     def __iter__(self):
         base_url = "http://releases.libreelec.tv"
         json = self._json()
-        if libreelec.release() not in json:
-            return
-        releases = json[libreelec.release()]['project'][config.arch]['releases']
-        for release in releases.itervalues():
+        i = 7.0
+        releases = []
+        while "{0}-{1}".format(libreelec.name(), i) in json:
+            rels = json["{0}-{1}".format(libreelec.name(), i)]['project'][config.arch]['releases']
+            for rel in rels.itervalues():
+                releases.append(rel)
+            i += 1
+        for release in releases:
             filename = release['file']['name']
             release_name = re.search('-([\d\.]+).tar', filename).group(1)
             release_link = ReleaseLink(base_url, filename, release_name)

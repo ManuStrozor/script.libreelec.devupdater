@@ -11,10 +11,10 @@ UPDATE_IMAGES = ('SYSTEM', 'KERNEL')
 
 
 def release():
-    dist = OS_RELEASE['NAME']
-    return "{name}-{version}".format(name=dist,
-                                     version=OS_RELEASE['VERSION_ID'])
+    return "{name}-{version}".format(name=OS_RELEASE['NAME'], version=OS_RELEASE['VERSION_ID'])
 
+def name():
+    return OS_RELEASE['NAME']
 
 def mount_readwrite():
     subprocess.check_call(['mount', '-o', 'rw,remount', '/flash'])
